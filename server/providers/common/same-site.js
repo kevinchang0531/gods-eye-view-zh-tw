@@ -1,5 +1,43 @@
 import { admitSameSiteRequest } from '../../../src/localRequestGate.mjs';
 
+// zh-tw-plugin（Render 部署用）：GEV_TRUST_HOSTING_PROXY=1 時，原本因為帶了
+// X-Forwarded-* 而被拒的路線改用 admitSameSiteKeyless 的規則（仍擋跨站請求）。
+// 只要伺服器設定了任何金鑰，這個開關自動失效，回到原作者的嚴格規則。
+const KEY_ENV_NAMES = Object.freeze([
+  'AISSTREAM_API_KEY',
+  'CESIUM_ION_TOKEN',
+  'FIRMS_MAP_KEY',
+  'GEMINI_API_KEY',
+  'GOOGLE_MAPS_API_KEY',
+  'GOOGLE_MAPS_SERVER_API_KEY',
+  'LIVEUAMAP_API_KEY',
+  'LL2_API_TOKEN',
+  'MAPILLARY_CLIENT_TOKEN',
+  'ONTARIO_511_API_KEY',
+  'OPENAI_API_KEY',
+  'OPENSKY_CLIENT_ID',
+  'OPENSKY_CLIENT_SECRET',
+  'TOMTOM_API_KEY',
+  'WORLDNEWSAPI_KEY',
+]);
+
+let warnedKeys = false;
+/** Whether the hosting platform's forwarding headers are trusted. */
+export function trustsHostingProxy(env = process.env) {
+  if (env.GEV_TRUST_HOSTING_PROXY !== '1') return false;
+  const configured = KEY_ENV_NAMES.filter((name) =>
+    String(env[name] ?? '').trim(),
+  );
+  if (!configured.length) return true;
+  if (!warnedKeys) {
+    warnedKeys = true;
+    console.warn(
+      `[same-site] GEV_TRUST_HOSTING_PROXY ignored: keys are configured (${configured.join(', ')})`,
+    );
+  }
+  return false;
+}
+
 /**
  * Cross-site request gate for cost-bearing and log endpoints. Feeds the
  * request to the pure, unit-tested `admitSameSiteRequest` and answers 403
@@ -13,6 +51,8 @@ import { admitSameSiteRequest } from '../../../src/localRequestGate.mjs';
  * @returns {boolean} True when a 403 was sent.
  */
 export function admitSameSite(req, res) {
+  // zh-tw-plugin：免金鑰的公開部署（Render）在反向代理後面，改用 keyless 規則。
+  if (trustsHostingProxy()) return admitSameSiteKeyless(req, res);
   const verdict = admitSameSiteRequest({
     hostHeader: req.headers?.host,
     protocol: req.socket?.encrypted ? 'https:' : 'http:',

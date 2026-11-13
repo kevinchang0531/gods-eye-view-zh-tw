@@ -17,3 +17,7 @@ services:
         value: 24.22.2
       - key: PUPPETEER_SKIP_DOWNLOAD
         value: "1"
+      # 信任 Render 的反向代理，讓衛星、攝影機、新聞等免金鑰路線可用（仍擋跨站請求）。
+      # 一旦設定任何 API 金鑰，伺服器會自動忽略這個開關。
+      - key: GEV_TRUST_HOSTING_PROXY
+        value: "1"
