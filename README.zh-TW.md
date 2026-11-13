@@ -3,7 +3,7 @@
 > 本 repo fork 自 [bilawalsidhu/gods-eye-view](https://github.com/bilawalsidhu/gods-eye-view)（MIT 授權），
 > 只多了「台灣繁體中文外掛」與 Render 部署設定。原始英文說明見 [README.md](README.md)。
 
-**線上版：** 部署在 Render（網址部署後補上）
+**線上版：** <https://gods-eye-view-zh-tw.onrender.com/>（Render 免費方案，沒人用會休眠，第一次開要等約一分鐘）
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kevinchang0531/gods-eye-view-zh-tw)
 
