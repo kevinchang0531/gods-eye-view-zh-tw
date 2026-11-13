@@ -7,6 +7,9 @@ export const LOCALE_STORAGE_KEY = 'gev:locale:v1';
 /** Source language and fallback. */
 export const DEFAULT_LOCALE = 'en';
 
+/** zh-tw-plugin：第一次開啟的語言（設成 null 就恢復跟隨瀏覽器）。 */
+export const FIRST_VISIT_LOCALE = 'zh-Hant';
+
 /** Shipped locales; order does not matter. Adding one: docs/TRANSLATORS.md. */
 export const LOCALES = Object.freeze([
   'en',
@@ -40,7 +43,7 @@ export const LOCALE_NAMES = Object.freeze({
   sv: 'Svenska',
   uk: 'Українська',
   'zh-CN': '中文（简体）',
-  'zh-Hant': '中文（繁體）',
+  'zh-Hant': '中文（台灣）',
 });
 
 /** Right-to-left locales. */
@@ -127,6 +130,8 @@ export function resolveLocale({
   if (fromQuery) return fromQuery;
   const stored = readStoredLocale(storage);
   if (stored) return stored;
+  // zh-tw-plugin：沒有指定語言時一律用台灣繁體中文。
+  if (FIRST_VISIT_LOCALE) return FIRST_VISIT_LOCALE;
   for (const candidate of Array.isArray(languages) ? languages : []) {
     const normalized = normalizeLocale(candidate);
     if (normalized) return normalized;
