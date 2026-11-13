@@ -1,0 +1,19 @@
+# Render 免費方案部署設定（台灣繁中版 God's Eye View）
+# 建置成正式版再用 vite preview 跑：網頁與 /api 即時資料轉接都在同一個 Node 程序，約 160 MB 記憶體。
+# 沒有設定任何 API 金鑰；伺服器對外分享時填金鑰的面板會自動停用。
+services:
+  - type: web
+    name: gods-eye-view-zh-tw
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm ci --include=dev && npm run build
+    # 只接受 Render 給這個服務的網域當 Host（防 DNS rebinding）。
+    startCommand: GEV_ALLOWED_HOSTS="${GEV_ALLOWED_HOSTS:-$RENDER_EXTERNAL_HOSTNAME}" npx vite preview --host 0.0.0.0 --port "$PORT" --strictPort
+    healthCheckPath: /
+    autoDeployTrigger: commit
+    envVars:
+      - key: NODE_VERSION
+        value: 24.22.2
+      - key: PUPPETEER_SKIP_DOWNLOAD
+        value: "1"

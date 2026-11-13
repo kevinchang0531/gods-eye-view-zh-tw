@@ -3,7 +3,9 @@
 > 本 repo fork 自 [bilawalsidhu/gods-eye-view](https://github.com/bilawalsidhu/gods-eye-view)（MIT 授權），
 > 只多了「台灣繁體中文外掛」與 Hugging Face 部署設定。原始英文說明見 [README.md](README.md)。
 
-**線上版：** <https://huggingface.co/spaces/HF_USER/gods-eye-view-zh-tw>
+**線上版：** 部署在 Render（網址部署後補上）
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kevinchang0531/gods-eye-view-zh-tw)
 
 ## 這是什麼（白話版）
 
@@ -48,15 +50,16 @@ npm run dev
 
 開 <http://localhost:4173>。本機版可以在 POWER UP 面板填 API 金鑰（Google、Cesium、OpenAI、AISStream 船舶等）。
 
-## 線上版（Hugging Face Spaces）
+## 線上版（Render）
 
-即時航班、船舶等資料要經過這個專案自己的 Node 伺服器轉接，所以不能只放成靜態網頁，
-線上版放在 Hugging Face Spaces（Docker）。`hf-space/` 裡只有 `Dockerfile` 和 `README.md`：
-建置時從本 repo 抓原始碼、`npm ci`、在 7860 埠啟動伺服器。
+即時航班、船舶等資料要經過這個專案自己的 Node 伺服器轉接，所以不能只放成靜態網頁。
+線上版用 `render.yaml` 部署在 Render 免費方案：建置時 `npm run build`，執行時 `vite preview`
+同時提供網頁和 /api 轉接（約 160 MB 記憶體，免費方案 512 MB 夠用）。
 
 - 線上版**沒有設定任何 API 金鑰**，只用免金鑰資料；伺服器對外分享時，填金鑰的面板會自動停用。
-- 改了 GitHub 後，到 Space 的 Settings 按 **Factory rebuild** 就會用最新程式碼重建。
-- 48 小時沒人用會休眠，再開啟要等一兩分鐘。
+- 只接受 Render 給的網域當 Host（`RENDER_EXTERNAL_HOSTNAME`），其他網域一律 403。
+- push 到 main 會自動重新部署。
+- 免費方案 15 分鐘沒人用會休眠，再開啟要等約一分鐘。
 
 ## 授權
 
